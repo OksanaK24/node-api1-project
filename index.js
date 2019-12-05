@@ -47,7 +47,7 @@ app.get("/api/users/:id", (req, res) => {
         data
             .findById(req.params.id)
             .then(user =>{
-                res.status(201).json(user)
+                res.status(200).json(user)
             })
             .catch(() => {
                 res.status(500).json({ errorMessage: "The user information could not be retrieved." })
@@ -57,18 +57,66 @@ app.get("/api/users/:id", (req, res) => {
     }
 })
 
+app.delete("/api/users/:id", (req, res) => {
+    if(req.params.id){
+        data
+            .remove(req.params.id)
+            .then(user =>{
+                res.status(200).json(user)
+            })
+            .catch(() => {
+                res.status(500).json({ errorMessage: "The user could not be removed" })
+            })
+    }else{
+        res.status(404).json({ message: "The user with the specified ID does not exist." })
+    }
+})
 
-// app.delete("/users/:id", (req, res) => {
-//     const user = db.find(row => row.id === req.params.id)
+// When the client makes a PUT request to /api/users/:id:
 
-//     if (user){
-//         db = db.filter(row => row.id !== req.params.id)
-//         res.json(user)
-//     }else{
-//         res.status(404).json({ error: "User not found" })
-//     }
-// })
+// If the user with the specified id is not found:
 
+// respond with HTTP status code 404 (Not Found).
+// return the following JSON object: { message: "The user with the specified ID does not exist." }.
+// If the request body is missing the name or bio property:
+
+// respond with HTTP status code 400 (Bad Request).
+// return the following JSON response: { errorMessage: "Please provide name and bio for the user." }.
+// If there's an error when updating the user:
+
+// respond with HTTP status code 500.
+// return the following JSON object: { errorMessage: "The user information could not be modified." }.
+// If the user is found and the new information is valid:
+
+// update the user document in the database using the new information sent in the request body.
+// respond with HTTP status code 200 (OK).
+// return the newly updated user document.
+
+// update(): accepts two arguments, the first is the id of the user to update and the second is an 
+// object with the changes to apply. It returns the count of updated records. If the count is 1 it means the record was updated correctly.
+
+
+app.put("/api/users/:id", (req, res) => {
+
+    const { name, bio } = req.body;
+
+    if(req.params.id){
+        if(!name || !bio) {
+            res.status(400).json({ errorMessage: "Please provide name and bio for the user." })
+        } else {
+            data
+                .update(req.params.id, req.body)
+                .then(user =>{
+                    res.status(200).json(user)
+                })
+                .catch(() => {
+                    res.status(500).json({ errorMessage: "The user information could not be modified." })
+                })
+        }
+    }else{
+        res.status(404).json({ message: "The user with the specified ID does not exist." })
+    }
+})
 
 
 const port = 1204
