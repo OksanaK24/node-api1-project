@@ -83,6 +83,7 @@ app.put("/api/users/:id", (req, res) => {
             data
                 .update(req.params.id, req.body)
                 .then(user =>{
+                    // не виконується завдання "return the newly updated user document". чому? 
                     res.status(200).json(user)
                 })
                 .catch(() => {
