@@ -1,11 +1,13 @@
 // implement your API here
 
 const express = require("express");
+const cors = require("cors")
 let data = require("./data/db.js");
 
 const app = express();
 
 app.use(express.json())
+app.use(cors())
 
 app.get("/", (req, res) => {
     console.log("ip:", req.ip);
@@ -21,9 +23,18 @@ app.post("/api/users", (req, res) => {
       data
         .insert(req.body)
         .then(user => {
-          res.status(201).json(user);
+          return res.status(201).json(user);
+        //   return  app.get("/api/users/:id", async (req, res, next) => {
+        //         await data
+        //             .findById(user.id)
+        //             .then(newUser => {
+        //                 console.log(user.id)
+        //                 return res.status(201).json(newUser)
+        //             })
+        //             next()
+        //     })
           // не показує мені всю інфу - чому тільки ІД? Попробувати добавити в db.js до функції find ще щось крім ІД
-          console.log(user)
+
         })
         .catch(() => {
           res.status(500).json({ errorMessage: "There was an error while saving the user to the database" })
